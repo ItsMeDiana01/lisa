@@ -1,211 +1,251 @@
 ﻿<!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimal-ui" />
-  <title>AR Bangun Ruang</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Augmented Reality - Bangun Ruang SD</title>
 
-  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/ar.js@4.4.0/aframe/build/aframe-ar.js"></script>
+    <!-- Tailwind CSS untuk styling modern dan responsif -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-  <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    <!-- Font Inter untuk tipografi yang bersih -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     
-    /* Wajib transparan agar kamera dari AR.js terlihat */
-    html, body { width: 100%; height: 100%; overflow: hidden; background-color: transparent !important; font-family: 'Nunito', sans-serif; }
+    <style>
+        /* Mengatur font global dan warna latar belakang */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        /* Mengatur tampilan model-viewer secara khusus */
+        model-viewer {
+            width: 100%;
+            height: 60vh;
+            --poster-color: #f3f4f6;
+            transition: opacity 0.5s ease-in-out;
+            display: none; /* Awalnya disembunyikan sampai tombol Tampilkan ditekan */
+            background-color: #ffffff;
+        }
+        /* Menyesuaikan tampilan tombol AR */
+        .ar-button {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border-radius: 9999px;
+            padding: 0.75rem 2rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 50;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        .ar-button:hover {
+            background-color: #333333;
+            transform: translateX(-50%) scale(1.05);
+        }
+        /* Gaya untuk tombol model */
+        .model-button {
+            background-color: #e5e7eb;
+            color: #374151;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .model-button:hover {
+            background-color: #d1d5db;
+        }
+        .model-button.active {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        /* Area Preview Image */
+        #flashcard-preview-container {
+            display: none;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+    </style>
 
-    /* UI Styles */
-    #ui-overlay { position: fixed; inset: 0; z-index: 100; pointer-events: none; }
-    #ui-overlay button, #ui-overlay a, #ui-overlay .panel { pointer-events: auto; }
-    #back-btn { position: fixed; top: 20px; left: 20px; z-index: 110; display: flex; align-items: center; gap: 8px; padding: 10px 18px; background: rgba(0, 0, 0, 0.55); border: 1px solid rgba(0, 220, 255, 0.45); border-radius: 100px; color: #fff; font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-    #info-toggle { position: fixed; top: 20px; right: 20px; z-index: 110; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.55); border: 1px solid rgba(0, 220, 255, 0.45); border-radius: 50%; color: #00dcff; cursor: pointer; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); font-size: 20px; font-weight: 700; font-family: 'Rajdhani', sans-serif; }
-    #status-bar { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 110; display: flex; align-items: center; gap: 10px; padding: 10px 22px; background: rgba(0, 0, 0, 0.55); border: 1px solid rgba(0, 220, 255, 0.3); border-radius: 100px; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); white-space: nowrap; max-width: 90vw; }
-    .status-dot { width: 9px; height: 9px; border-radius: 50%; background: #00dcff; box-shadow: 0 0 8px #00dcff; animation: pulse-dot 1.5s ease-in-out infinite; }
-    @keyframes pulse-dot { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.7); } }
-    #status-text { color: #e0f6ff; font-family: 'Rajdhani', sans-serif; font-size: 14px; font-weight: 500; letter-spacing: 0.5px; }
-    
-    #info-panel { position: fixed; top: 0; right: 0; height: 100%; width: min(340px, 92vw); z-index: 120; background: rgba(5, 10, 25, 0.88); border-left: 1px solid rgba(0, 220, 255, 0.25); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 24px; overflow-y: auto; transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1); color: #eaf7ff; }
-    #info-panel.open { transform: translateX(0); }
-    #info-panel h2 { font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700; color: #00dcff; margin-bottom: 6px; letter-spacing: 1px; text-transform: uppercase; }
-    #info-panel .subtitle { font-size: 13px; color: rgba(200,220,240,0.65); margin-bottom: 16px; line-height: 1.5; }
-    .marker-item { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(0, 220, 255, 0.15); background: rgba(0, 220, 255, 0.05); margin-bottom: 10px; }
-    .marker-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
-    .marker-name { font-family: 'Rajdhani', sans-serif; font-size: 17px; font-weight: 700; color: #e0f0ff; letter-spacing: 0.5px; }
-    .marker-file { font-size: 11px; color: rgba(160,200,220,0.55); margin-top: 1px; }
-
-    /* Loading Screen Kustom */
-    #loading-screen {
-      position: fixed; inset: 0; z-index: 9999;
-      background: #0f172a; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 20px;
-      color: #fff; font-family: 'Nunito', sans-serif; transition: opacity 0.5s ease;
-      text-align: center; padding: 20px;
-    }
-    .spinner {
-      width: 50px; height: 50px; border: 5px solid rgba(0, 220, 255, 0.3);
-      border-top-color: #00dcff; border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    
-    #error-icon { display: none; width: 60px; height: 60px; stroke: #ff6b6b; stroke-width: 2; fill: none; margin-bottom: 10px; }
-    #reload-btn {
-      display: none; padding: 12px 28px; margin-top: 15px; background: #00dcff; border: none; border-radius: 100px;
-      color: #0f172a; font-weight: bold; font-family: 'Rajdhani', sans-serif; font-size: 16px; cursor: pointer;
-    }
-  </style>
+    <!-- Mengimpor komponen model-viewer.js yang diperlukan -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 </head>
-<body>
+<body class="bg-gray-100 flex flex-col min-h-screen text-gray-800">
 
-  <div id="loading-screen">
-    <svg id="error-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-    <div class="spinner" id="spinner"></div>
-    <h2 id="loading-title">Memuat Kamera AR...</h2>
-    <p id="loading-desc" style="font-size: 14px; color: #94a3b8; max-width: 300px;">Mohon izinkan akses kamera pada browser Anda.</p>
-    <button id="reload-btn" onclick="location.reload()">Muat Ulang Halaman</button>
-  </div>
+    <div class="flex-grow flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-xl overflow-hidden max-w-4xl w-full">
+            <div class="p-8 md:p-12">
+                <h1 id="model-title" class="text-3xl md:text-4xl font-bold text-center mb-2 text-gray-900 uppercase tracking-tight">Media Belajar Bangun Ruang AR</h1>
+                <p id="model-subtitle" class="text-center text-gray-500 mb-8 font-medium">Langkah 1: Pilih Bangun Ruang</p>
 
-  <a-scene 
-    embedded 
-    vr-mode-ui="enabled: false" 
-    renderer="antialias: true; alpha: true; logarithmicDepthBuffer: true;" 
-    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;">
-    
-    <a-marker type="pattern" url="marker/balok.patt" id="marker-balok">
-      <a-box position="0 0.5 0" rotation="0 45 0" scale="0.6 0.4 0.8" material="color: #2563eb; metalness: 0.3; roughness: 0.5; opacity: 0.95"></a-box>
-      <a-text value="BALOK" position="0 1.1 0" align="center" color="#ffffff" scale="0.6 0.6 0.6" look-at="[camera]"></a-text>
-    </a-marker>
-    <a-marker type="pattern" url="marker/bola.patt" id="marker-bola">
-      <a-sphere radius="0.35" position="0 0.35 0" material="color: #f97316; metalness: 0.3; roughness: 0.3"></a-sphere>
-      <a-text value="BOLA" position="0 0.9 0" align="center" color="#ffffff" scale="0.6 0.6 0.6" look-at="[camera]"></a-text>
-    </a-marker>
-    <a-marker type="pattern" url="marker/kerucut.patt" id="marker-kerucut">
-      <a-cone radius-bottom="0.35" height="0.7" position="0 0.35 0" material="color: #22c55e; metalness: 0.2; roughness: 0.4"></a-cone>
-      <a-text value="KERUCUT" position="0 0.95 0" align="center" color="#ffffff" scale="0.6 0.6 0.6" look-at="[camera]"></a-text>
-    </a-marker>
-    <a-marker type="pattern" url="marker/kubus.patt" id="marker-kubus">
-      <a-box position="0 0.5 0" rotation="0 35 0" scale="0.5 0.5 0.5" material="color: #8b5cf6; metalness: 0.25; roughness: 0.4"></a-box>
-      <a-text value="KUBUS" position="0 1.0 0" align="center" color="#ffffff" scale="0.6 0.6 0.6" look-at="[camera]"></a-text>
-    </a-marker>
-    <a-marker type="pattern" url="marker/limas.patt" id="marker-limas">
-      <a-entity position="0 0.5 0" geometry="primitive: tetrahedron; radius: 0.45" material="color: #ef4444; metalness: 0.2; roughness: 0.5"></a-entity>
-      <a-text value="LIMAS" position="0 1.1 0" align="center" color="#ffffff" scale="0.6 0.6 0.6" look-at="[camera]"></a-text>
-    </a-marker>
-    <a-marker type="pattern" url="marker/prisma.patt" id="marker-prisma">
-      <a-entity position="0 0.5 0" rotation="0 45 0" geometry="primitive: cylinder; radiusTop: 0.28; radiusBottom: 0.28; height: 0.8; segmentsRadial: 3" material="color: #0ea5e9; metalness: 0.2; roughness: 0.4"></a-entity>
-      <a-text value="PRISMA" position="0 1.1 0" align="center" color="#ffffff" scale="0.6 0.6 0.6" look-at="[camera]"></a-text>
-    </a-marker>
-    <a-marker type="pattern" url="marker/tabung.patt" id="marker-tabung">
-      <a-cylinder radius="0.32" height="0.7" position="0 0.35 0" material="color: #22d3ee; metalness: 0.2; roughness: 0.4"></a-cylinder>
-      <a-text value="TABUNG" position="0 0.95 0" align="center" color="#ffffff" scale="0.6 0.6 0.6" look-at="[camera]"></a-text>
-    </a-marker>
-    
-    <a-entity camera></a-entity>
-  </a-scene>
+                <!-- BAGIAN 1: PEMILIHAN MODEL -->
+                <div class="mb-10">
+                    <h2 class="text-sm font-bold text-center text-gray-400 uppercase mb-4 tracking-widest">Pilih Bangun Ruang</h2>
+                    <div id="model-buttons-container" class="flex flex-wrap justify-center gap-3">
+                        <!-- Tombol-tombol akan dibuat secara dinamis oleh JavaScript -->
+                    </div>
+                </div>
 
-  <div id="ui-overlay">
-    <button id="back-btn" onclick="goBack()">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" style="stroke:#00dcff">
-        <polyline points="15 18 9 12 15 6"/>
-      </svg>
-      Kembali
-    </button>
-    <button id="info-toggle" onclick="togglePanel()" title="Daftar Marker">☰</button>
-    <div id="status-bar">
-      <div class="status-dot"></div>
-      <span id="status-text">Arahkan kamera ke marker</span>
+                <!-- BAGIAN 2: AUTOMATIC PREVIEW FLASHCARD -->
+                <div class="bg-blue-50 border-2 border-dashed border-blue-200 rounded-2xl p-6 mb-8 text-center">
+                    <h2 class="font-bold text-blue-700 mb-4 uppercase text-sm tracking-widest">Langkah 2: Scan Flashcard</h2>
+                    
+                    <div id="flashcard-preview-container">
+                        <p class="text-xs text-blue-400 mb-2 font-bold">Flashcard Terdeteksi:</p>
+                        <!-- Gambar akan berubah otomatis lewat JS -->
+                        <img id="flashcard-preview-img" src="" alt="Preview" class="rounded-lg shadow-md border-4 border-white mx-auto max-h-48">
+                    </div>
+                    
+                    <div id="no-selection-msg" class="text-blue-400 italic text-sm">
+                        Silakan pilih bangun ruang di atas untuk melihat flashcard.
+                    </div>
+                </div>
+
+                <!-- BAGIAN 3: TOMBOL TRIGGER & VIEWER -->
+                <div id="action-container" class="text-center mb-8">
+                    <button id="btn-show-3d" class="bg-green-600 hover:bg-green-700 text-white px-10 py-4 rounded-2xl font-black text-lg transition-all shadow-lg uppercase tracking-wider transform active:scale-95">
+                        Munculkan Model 3D
+                    </button>
+                </div>
+
+                <!-- Model Viewer utama dengan Fitur AR AKTIF -->
+                <div class="relative">
+                    <model-viewer
+                        id="ar-model-viewer"
+                        src="kubus.glb"
+                        ios-src="kubus.usdz"
+                        alt="Model 3D Bangun Ruang"
+                        shadow-intensity="1"
+                        camera-controls
+                        auto-rotate
+                        ar
+                        ar-modes="webxr scene-viewer quick-look"
+                        class="rounded-2xl border border-gray-200 shadow-inner"
+                    >
+                        <!-- Tombol AR -->
+                        <button slot="ar-button" class="ar-button">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"></path></svg>
+                            MASUK KE MODE AR
+                        </button>
+                    </model-viewer>
+                </div>
+
+            </div>
+            
+            <div class="bg-gray-50 p-6 text-center text-sm text-gray-500 border-t border-gray-200">
+                <p class="mb-1 font-semibold">Klik tombol hitam di dalam gambar untuk melihat model di duniamu!</p>
+                <p class="font-bold text-gray-400">Media Pembelajaran Augmented Reality</p>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div id="info-panel">
-    <h2>Bangun Ruang AR</h2>
-    <p class="subtitle">Arahkan kamera ke salah satu marker pada folder <b>marker/</b> untuk menampilkan objek 3D.</p>
-    <div class="marker-item"><div class="marker-dot" style="background:#2563eb;"></div><div><div class="marker-name">Balok</div><div class="marker-file">marker/balok.patt</div></div></div>
-    <div class="marker-item"><div class="marker-dot" style="background:#f97316;"></div><div><div class="marker-name">Bola</div><div class="marker-file">marker/bola.patt</div></div></div>
-    <div class="marker-item"><div class="marker-dot" style="background:#22c55e;"></div><div><div class="marker-name">Kerucut</div><div class="marker-file">marker/kerucut.patt</div></div></div>
-    <div class="marker-item"><div class="marker-dot" style="background:#8b5cf6;"></div><div><div class="marker-name">Kubus</div><div class="marker-file">marker/kubus.patt</div></div></div>
-    <div class="marker-item"><div class="marker-dot" style="background:#ef4444;"></div><div><div class="marker-name">Limas</div><div class="marker-file">marker/limas.patt</div></div></div>
-    <div class="marker-item"><div class="marker-dot" style="background:#0ea5e9;"></div><div><div class="marker-name">Prisma</div><div class="marker-file">marker/prisma.patt</div></div></div>
-    <div class="marker-item"><div class="marker-dot" style="background:#22d3ee;"></div><div><div class="marker-name">Tabung</div><div class="marker-file">marker/tabung.patt</div></div></div>
-  </div>
+    <script>
+        /**
+         * CATATAN: Ubah 'img_src' di bawah ini sesuai dengan nama file gambar 
+         * yang ada di laptop Anda. Pastikan filenya satu folder dengan HTML ini.
+         */
+        const models = [
+            { name: 'Kubus', glb_src: 'glb1/kubus.glb', usdz_src: 'kubus.usdz', img_src: 'marker/kubus.png' },
+            { name: 'Balok', glb_src: 'glb1/balok.glb', usdz_src: 'balok.usdz', img_src: 'marker/balok.png' },
+            { name: 'Prisma', glb_src: 'glb1/prisma.glb', usdz_src: 'prisma.usdz', img_src: 'marker/prisma.png' },
+            { name: 'Limas', glb_src: 'glb1/limas.glb', usdz_src: 'limas.usdz', img_src: 'marker/limas.png' },
+            { name: 'Tabung', glb_src: 'glb1/tabung.glb', usdz_src: 'tabung.usdz', img_src: 'marker/tabung.png' },
+            { name: 'Kerucut', glb_src: 'glb1/kerucut.glb', usdz_src: 'kerucut.usdz', img_src: 'marker/kerucut.png' },
+            { name: 'Bola', glb_src: 'glb1/bola.glb', usdz_src: 'bola.usdz', img_src: 'marker/bola.png' },
+        ];
 
-  <script>
-    // 1. Logika Panel Bantuan UI
-    const panel = document.getElementById('info-panel');
-    function togglePanel(){ panel.classList.toggle('open'); }
-    document.addEventListener('click', (e)=>{
-      if(panel.classList.contains('open') && !panel.contains(e.target) && e.target.id !== 'info-toggle'){
-        panel.classList.remove('open');
-      }
-    });
+        const modelViewer = document.getElementById('ar-model-viewer');
+        const buttonContainer = document.getElementById('model-buttons-container');
+        const modelTitle = document.getElementById('model-title');
+        const modelSubtitle = document.getElementById('model-subtitle');
+        
+        const previewContainer = document.getElementById('flashcard-preview-container');
+        const previewImg = document.getElementById('flashcard-preview-img');
+        const noSelectionMsg = document.getElementById('no-selection-msg');
+        const btnShow3d = document.getElementById('btn-show-3d');
 
-    function goBack(){
-      if(window.history.length > 1) window.history.back();
-      else window.location.href = 'index.html'; // Sesuaikan URL kembali
-    }
+        let selectedModel = null;
 
-    // 2. Deteksi AR.js Native Event (Paling Stabil)
-    const loadingScreen = document.getElementById('loading-screen');
-    const loadingTitle = document.getElementById('loading-title');
-    const loadingDesc = document.getElementById('loading-desc');
-    const spinner = document.getElementById('spinner');
-    const errorIcon = document.getElementById('error-icon');
-    const reloadBtn = document.getElementById('reload-btn');
+        // 1. Tombol "Munculkan Model 3D"
+        btnShow3d.addEventListener('click', function() {
+            if (!selectedModel) {
+                alert("Silakan pilih bangun ruang terlebih dahulu!");
+                return;
+            }
+            // Munculkan viewer
+            modelViewer.style.display = 'block';
+            // Panggil mekanisme switch original
+            switchModel(selectedModel);
+            // Scroll otomatis ke model
+            modelViewer.scrollIntoView({ behavior: 'smooth' });
+        });
 
-    // Jika kamera berhasil menyala
-    window.addEventListener('camera-init', () => {
-      loadingScreen.style.opacity = '0';
-      setTimeout(() => { loadingScreen.style.display = 'none'; }, 500);
-    });
+        // MEKANISME PROGRAM ORIGINAL
+        function switchModel(model) {
+            modelViewer.style.opacity = '0';
 
-    // Jika hardware gagal atau izin ditolak oleh browser
-    window.addEventListener('camera-error', () => {
-      spinner.style.display = 'none';
-      errorIcon.style.display = 'block';
-      reloadBtn.style.display = 'block';
-      loadingTitle.innerText = 'Kamera Gagal Dimuat';
-      loadingTitle.style.color = '#ff6b6b';
-      loadingDesc.innerHTML = 'Pastikan <b>izin kamera</b> diberikan pada ikon gembok di browser, dan tidak ada aplikasi lain (Zoom/GMeet) yang sedang memakai kamera laptopmu.';
-    });
+            setTimeout(() => {
+                modelViewer.src = model.glb_src;
+                modelViewer.iosSrc = model.usdz_src;
+                modelViewer.alt = `Model 3D ${model.name}`;
+                modelTitle.textContent = `Bangun Ruang: ${model.name}`;
+                modelSubtitle.textContent = `Pilih "MASUK KE MODE AR" untuk memproyeksikan benda ini ke duniamu.`;
 
-    // Fallback cerdas: Jika dalam 1 detik video sudah ter-load duluan sebelum event 'camera-init' tertangkap
-    const videoCheck = setInterval(() => {
-      const video = document.querySelector('video');
-      if (video && video.readyState >= 3) {
-        clearInterval(videoCheck);
-        loadingScreen.style.opacity = '0';
-        setTimeout(() => { loadingScreen.style.display = 'none'; }, 500);
-      }
-    }, 500);
+                modelViewer.style.opacity = '1';
 
-    // 3. Logika Pembaruan Status Marker di UI
-    const statusText = document.getElementById('status-text');
-    const markerNames = {
-      'marker-balok': 'Balok terdeteksi', 'marker-bola': 'Bola terdeteksi',
-      'marker-kerucut': 'Kerucut terdeteksi', 'marker-kubus': 'Kubus terdeteksi',
-      'marker-limas': 'Limas terdeteksi', 'marker-prisma': 'Prisma terdeteksi',
-      'marker-tabung': 'Tabung terdeteksi'
-    };
-    const activeMarkers = new Set();
-    
-    function updateStatus(){
-      if(activeMarkers.size === 0){
-        statusText.textContent = 'Arahkan kamera ke marker';
-      }else{
-        statusText.textContent = [...activeMarkers].map(id => markerNames[id] || id).join(' · ');
-      }
-    }
+                const buttons = buttonContainer.querySelectorAll('.model-button');
+                buttons.forEach(button => {
+                    button.classList.remove('active');
+                    if (button.textContent === model.name) {
+                        button.classList.add('active');
+                    }
+                });
+            }, 500);
+        }
 
-    window.addEventListener('load', ()=>{
-      Object.keys(markerNames).forEach(id => {
-        const el = document.getElementById(id);
-        if(!el) return;
-        el.addEventListener('markerFound', ()=>{ activeMarkers.add(id); updateStatus(); });
-        el.addEventListener('markerLost', ()=>{ activeMarkers.delete(id); updateStatus(); });
-      });
-    });
-  </script>
+        // Fungsi membuat tombol original dengan penambahan link gambar
+        function createModelButtons() {
+            models.forEach((model, index) => {
+                const button = document.createElement('button');
+                button.textContent = model.name;
+                button.className = 'model-button';
+
+                button.addEventListener('click', () => {
+                    selectedModel = model;
+                    
+                    // Update tampilan tombol aktif
+                    const buttons = buttonContainer.querySelectorAll('.model-button');
+                    buttons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    // UPDATE GAMBAR OTOMATIS BERDASARKAN HREF/LINK
+                    previewImg.src = model.img_src; 
+                    previewContainer.style.display = 'block';
+                    noSelectionMsg.style.display = 'none';
+
+                    // Reset alur: Sembunyikan viewer agar siswa harus menekan tombol "Munculkan"
+                    modelViewer.style.display = 'none';
+                    modelTitle.textContent = "AYO BELAJAR BANGUN RUANG!";
+                    modelSubtitle.textContent = `Flashcard ${model.name} terdeteksi. Silakan klik tombol di bawah.`;
+                });
+                buttonContainer.appendChild(button);
+            });
+        }
+
+        // Memuat tombol saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            createModelButtons();
+        });
+    </script>
+
 </body>
 </html>
