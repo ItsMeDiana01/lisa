@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cara Penggunaan Media Pembelajaran Flashcard AR</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: #fdfdfd;
+            overflow-x: hidden;
+        }
+        .font-header { font-family: 'Nunito', sans-serif; }
+        
+        .step-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .step-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.2);
+        }
+        .step-active {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        .bg-pattern {
+            background-color: #f8fafc;
+            background-image: radial-gradient(#cbd5e1 0.5px, transparent 0.5px);
+            background-size: 20px 20px;
+        }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body class="bg-pattern">
+
+    <!-- Audio Player -->
+    <audio id="bgMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Header & Nav -->
+    <header class="sticky top-0 z-50 glass-header border-b border-blue-100 p-4 shadow-sm">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 p-2 rounded-xl text-white">
+                    <i data-lucide="scan-face"></i>
+                </div>
+                <div>
+                    <h1 class="font-header text-lg md:text-xl text-blue-900 leading-none">PANDUAN MEDIA</h1>
+                    <p class="text-xs text-blue-500 font-bold uppercase tracking-widest">Flashcard AR Bangun Ruang</p>
+                </div>
+            </div>
+            <button id="musicBtn" class="bg-blue-50 hover:bg-blue-100 text-blue-600 px-4 py-2 rounded-full flex items-center gap-2 transition-all border border-blue-200">
+                <span id="musicIcon"><i data-lucide="volume-x" size="20"></i></span>
+                <span class="text-xs font-bold hidden sm:block uppercase">Musik OFF</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto p-4 md:p-8 space-y-12">
+        
+        <!-- Hero Section -->
+        <section class="text-center space-y-4 py-6">
+            <h2 class="font-header text-3xl md:text-5xl text-blue-950">Ayo Belajar dengan <span class="text-blue-600">Teknologi AR!</span></h2>
+            <p class="max-w-2xl mx-auto text-slate-600 leading-relaxed">Panduan lengkap menggunakan Media Flashcard Augmented Reality untuk menjelajahi dunia Bangun Ruang masa depan.</p>
+        </section>
+
+        <!-- Tujuan Media -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center bg-white p-6 rounded-3xl border border-blue-50 shadow-sm">
+            <div class="space-y-4">
+                <h3 class="font-header text-2xl text-blue-900 flex items-center gap-2">
+                    <i data-lucide="sparkles" class="text-amber-500"></i> Tujuan Media
+                </h3>
+                <div class="space-y-3 text-slate-600">
+                    <p class="flex gap-3">
+                        <i data-lucide="check-circle-2" class="text-green-500 shrink-0"></i>
+                        Membantu memahami konsep <strong>Bangun Ruang</strong> secara nyata lewat visual 3D.
+                    </p>
+                    <p class="flex gap-3">
+                        <i data-lucide="check-circle-2" class="text-green-500 shrink-0"></i>
+                        Meningkatkan kemampuan <strong>Visualisasi Spasial</strong> (membayangkan benda dalam ruang).
+                    </p>
+                    <p class="flex gap-3">
+                        <i data-lucide="check-circle-2" class="text-green-500 shrink-0"></i>
+                        Melatih <strong>Future Thinking</strong> agar kreatif merancang dunia masa depan.
+                    </p>
+                </div>
+            </div>
+            <div class="bg-blue-600 h-64 rounded-2xl flex items-center justify-center text-white relative overflow-hidden">
+                <!-- Decorative Circle -->
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-400 rounded-full opacity-50"></div>
+                <div class="flex flex-col items-center gap-3">
+                    <i data-lucide="box" size="80" class="animate-bounce"></i>
+                    <p class="font-bold">Visualisasi 3D Interaktif</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Perangkat Section -->
+        <section class="space-y-6">
+            <h3 class="font-header text-2xl text-center text-blue-900">Apa yang Kamu Butuhkan?</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center space-y-2">
+                    <i data-lucide="layers" class="mx-auto text-blue-600" size="32"></i>
+                    <p class="text-sm font-bold">Flashcard Fisik</p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center space-y-2">
+                    <i data-lucide="smartphone" class="mx-auto text-blue-600" size="32"></i>
+                    <p class="text-sm font-bold">HP / Tablet / Laptop</p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center space-y-2">
+                    <i data-lucide="wifi" class="mx-auto text-blue-600" size="32"></i>
+                    <p class="text-sm font-bold">Koneksi Internet</p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center space-y-2">
+                    <i data-lucide="pencil" class="mx-auto text-blue-600" size="32"></i>
+                    <p class="text-sm font-bold">Alat Tulis & LKPD</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Langkah-Langkah -->
+        <section id="stepsContainer" class="space-y-6">
+            <h3 class="font-header text-2xl text-center text-blue-900">Langkah Penggunaan Media</h3>
+            <div class="grid grid-cols-1 gap-4">
+                <!-- Step 1 -->
+                <div onclick="toggleStep(this)" class="step-card bg-white p-6 rounded-2xl border-2 border-transparent shadow-sm flex items-start gap-4">
+                    <div class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold shrink-0">1</div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-blue-900">Buka Media Pembelajaran</h4>
+                        <p class="text-slate-500 text-sm hidden">Gunakan browser Chrome atau Edge untuk membuka link media AR yang diberikan guru.</p>
+                    </div>
+                    <i data-lucide="chevron-down" class="text-slate-400"></i>
+                </div>
+                <!-- Step 2 -->
+                <div onclick="toggleStep(this)" class="step-card bg-white p-6 rounded-2xl border-2 border-transparent shadow-sm flex items-start gap-4">
+                    <div class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold shrink-0">2</div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-blue-900">Siapkan Flashcard</h4>
+                        <p class="text-slate-500 text-sm hidden">Letakkan flashcard di atas meja yang rata dengan pencahayaan yang terang agar mudah terbaca.</p>
+                    </div>
+                    <i data-lucide="chevron-down" class="text-slate-400"></i>
+                </div>
+                <!-- Step 3 -->
+                <div onclick="toggleStep(this)" class="step-card bg-white p-6 rounded-2xl border-2 border-transparent shadow-sm flex items-start gap-4">
+                    <div class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold shrink-0">3</div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-blue-900">Aktifkan Kamera AR</h4>
+                        <p class="text-slate-500 text-sm hidden">Tekan tombol 'Mulai AR' dan arahkan kamera ke arah flashcard. Bangun ruang 3D akan segera muncul!</p>
+                    </div>
+                    <i data-lucide="chevron-down" class="text-slate-400"></i>
+                </div>
+                <!-- Step 4 -->
+                <div onclick="toggleStep(this)" class="step-card bg-white p-6 rounded-2xl border-2 border-transparent shadow-sm flex items-start gap-4">
+                    <div class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold shrink-0">4</div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-blue-900">Eksplorasi Objek</h4>
+                        <p class="text-slate-500 text-sm hidden">Putar flashcard atau gerakkan kameramu untuk melihat bangun ruang dari depan, samping, dan atas.</p>
+                    </div>
+                    <i data-lucide="chevron-down" class="text-slate-400"></i>
+                </div>
+                <!-- Step 5 -->
+                <div onclick="toggleStep(this)" class="step-card bg-white p-6 rounded-2xl border-2 border-transparent shadow-sm flex items-start gap-4">
+                    <div class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold shrink-0">5</div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-blue-900">Kerjakan Tantangan & LKPD</h4>
+                        <p class="text-slate-500 text-sm hidden">Jawab pertanyaan Future Thinking dan isi LKPD berdasarkan pengamatan AR yang kamu lakukan.</p>
+                    </div>
+                    <i data-lucide="chevron-down" class="text-slate-400"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tips Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Petunjuk Siswa -->
+            <div class="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-3xl p-6 text-white space-y-4">
+                <h3 class="font-header text-xl flex items-center gap-2">
+                    <i data-lucide="user"></i> Untuk Siswa
+                </h3>
+                <ul class="space-y-2 text-blue-50 text-sm">
+                    <li>• Fokuslah saat mengamati objek 3D.</li>
+                    <li>• Bayangkan bagaimana bentuk itu jika dibuka.</li>
+                    <li>• Kerjakan LKPD dengan mandiri dan teliti.</li>
+                    <li>• Bertanyalah jika ada langkah yang sulit.</li>
+                </ul>
+            </div>
+            <!-- Petunjuk Guru -->
+            <div class="bg-gradient-to-br from-amber-500 to-orange-600 rounded-3xl p-6 text-white space-y-4">
+                <h3 class="font-header text-xl flex items-center gap-2">
+                    <i data-lucide="graduation-cap"></i> Untuk Guru
+                </h3>
+                <ul class="space-y-2 text-amber-50 text-sm">
+                    <li>• Dampingi siswa dalam proses pemindaian AR.</li>
+                    <li>• Ajak siswa berdiskusi tentang manfaat bangun ruang di masa depan.</li>
+                    <li>• Gunakan LKPD untuk melihat perkembangan spasial siswa.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Safety Tips -->
+        <section class="bg-white border-2 border-blue-50 p-6 rounded-3xl">
+            <h3 class="font-header text-xl text-blue-900 mb-6 flex items-center gap-2">
+                <i data-lucide="shield-check" class="text-green-500"></i> Tips Nyaman & Aman
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="text-center space-y-2">
+                    <div class="bg-blue-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto text-blue-600">
+                        <i data-lucide="sun" size="24"></i>
+                    </div>
+                    <p class="text-xs font-bold uppercase">Cahaya Cukup</p>
+                </div>
+                <div class="text-center space-y-2">
+                    <div class="bg-blue-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto text-blue-600">
+                        <i data-lucide="monitor" size="24"></i>
+                    </div>
+                    <p class="text-xs font-bold uppercase">Jarak Layar</p>
+                </div>
+                <div class="text-center space-y-2">
+                    <div class="bg-blue-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto text-blue-600">
+                        <i data-lucide="clock" size="24"></i>
+                    </div>
+                    <p class="text-xs font-bold uppercase">Istirahat Mata</p>
+                </div>
+                <div class="text-center space-y-2">
+                    <div class="bg-blue-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto text-blue-600">
+                        <i data-lucide="users" size="24"></i>
+                    </div>
+                    <p class="text-xs font-bold uppercase">Gantian Perangkat</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+ 
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Music Logic
+        const music = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
+        const musicIcon = document.getElementById('musicIcon');
+        const musicText = musicBtn.querySelector('span:last-child');
+        let isPlaying = false;
+
+        musicBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                music.pause();
+                musicIcon.innerHTML = '<i data-lucide="volume-x"></i>';
+                musicText.innerText = 'Musik OFF';
+                musicBtn.classList.replace('bg-blue-600', 'bg-blue-50');
+                musicBtn.classList.replace('text-white', 'text-blue-600');
+            } else {
+                music.play().catch(error => console.log("Audio play failed: ", error));
+                musicIcon.innerHTML = '<i data-lucide="volume-2"></i>';
+                musicText.innerText = 'Musik ON';
+                musicBtn.classList.replace('bg-blue-50', 'bg-blue-600');
+                musicBtn.classList.replace('text-white', 'text-blue-600'); // Note: intentional logic for child UI
+                musicBtn.style.backgroundColor = '#3b82f6';
+                musicBtn.style.color = '#fff';
+            }
+            isPlaying = !isPlaying;
+            lucide.createIcons();
+        });
+
+        // Step Accordion Logic
+        function toggleStep(element) {
+            // Close others
+            const allSteps = document.querySelectorAll('.step-card');
+            allSteps.forEach(step => {
+                if (step !== element) {
+                    step.classList.remove('step-active');
+                    step.querySelector('p').classList.add('hidden');
+                    step.querySelector('[data-lucide="chevron-up"]')?.setAttribute('data-lucide', 'chevron-down');
+                }
+            });
+
+            // Toggle current
+            const p = element.querySelector('p');
+            const icon = element.querySelector('i:last-child');
+            
+            if (p.classList.contains('hidden')) {
+                p.classList.remove('hidden');
+                element.classList.add('step-active');
+                // We'd ideally rotate the icon, but for simplicity with Lucide:
+            } else {
+                p.classList.add('hidden');
+                element.classList.remove('step-active');
+            }
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>

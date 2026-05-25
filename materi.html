@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materi Bangun Ruang – Media Flashcard Augmented Reality</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #06b6d4;
+            --accent: #f59e0b;
+            --bg-child: #f0f9ff;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-child);
+            color: #1e293b;
+            scroll-behavior: smooth;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .card-bangun {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card-bangun:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .shape-container {
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .ar-pulse {
+            animation: pulse-ar 2s infinite;
+        }
+
+        @keyframes pulse-ar {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+
+        .hidden-detail {
+            display: none;
+        }
+
+        .future-box {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            color: white;
+        }
+
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% { transform: translatey(0px); }
+            50% { transform: translatey(-10px); }
+            100% { transform: translatey(0px); }
+        }
+    </style>
+</head>
+<body class="pb-20">
+
+    <!-- Header Section -->
+    <header class="bg-indigo-600 text-white py-12 px-6 rounded-b-[3rem] shadow-lg text-center relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-24 h-24 bg-white opacity-10 rounded-full -translate-x-12 -translate-y-12"></div>
+        <div class="absolute bottom-0 right-0 w-32 h-32 bg-yellow-400 opacity-20 rounded-full translate-x-16 translate-y-16"></div>
+        
+        <div class="relative z-10 max-w-4xl mx-auto">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Materi Bangun Ruang</h1>
+            <p class="text-xl md:text-2xl font-medium opacity-90 mb-6">Media Flashcard Augmented Reality (AR)</p>
+            <div class="inline-block bg-yellow-400 text-indigo-900 px-6 py-2 rounded-full font-bold shadow-md floating">
+                🚀 Jelajahi Ruang Masa Depan!
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 mt-12">
+        
+        <!-- Tujuan Pembelajaran -->
+        <section class="mb-12 glass-morphism p-8 rounded-3xl border-l-8 border-indigo-500 shadow-sm">
+            <h2 class="text-2xl font-bold text-indigo-700 mb-6 flex items-center">
+                <span class="mr-3 text-3xl">🎯</span> Tujuan Petualangan Kita
+            </h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <ul class="space-y-4">
+                    <li class="flex items-start">
+                        <span class="bg-indigo-100 text-indigo-600 p-1 rounded-full mr-3 mt-1">✓</span>
+                        <p class="font-medium text-gray-700">Mampu mengenali berbagai bentuk bangun ruang di sekitar kita.</p>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="bg-indigo-100 text-indigo-600 p-1 rounded-full mr-3 mt-1">✓</span>
+                        <p class="font-medium text-gray-700">Memahami ciri-ciri khusus (sisi, rusuk, titik sudut) setiap benda.</p>
+                    </li>
+                </ul>
+                <ul class="space-y-4">
+                    <li class="flex items-start">
+                        <span class="bg-indigo-100 text-indigo-600 p-1 rounded-full mr-3 mt-1">✓</span>
+                        <p class="font-medium text-gray-700">Membangun kemampuan spasial (membayangkan objek dalam pikiran).</p>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="bg-indigo-100 text-indigo-600 p-1 rounded-full mr-3 mt-1">✓</span>
+                        <p class="font-medium text-gray-700">Menggunakan konsep bangun ruang untuk merancang masa depan.</p>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Pengantar Bangun Ruang -->
+        <section class="mb-16">
+            <div class="bg-white p-8 rounded-3xl shadow-md flex flex-col md:flex-row items-center gap-8">
+                <div class="w-full md:w-1/3">
+                    <svg viewBox="0 0 200 200" class="w-full h-auto drop-shadow-xl">
+                        <rect x="40" y="40" width="120" height="120" fill="#4f46e5" fill-opacity="0.2" stroke="#4f46e5" stroke-width="2"/>
+                        <rect x="60" y="20" width="120" height="120" fill="#4f46e5" fill-opacity="0.1" stroke="#4f46e5" stroke-width="2"/>
+                        <line x1="40" y1="40" x2="60" y2="20" stroke="#4f46e5" stroke-width="2"/>
+                        <line x1="160" y1="40" x2="180" y2="20" stroke="#4f46e5" stroke-width="2"/>
+                        <line x1="40" y1="160" x2="60" y2="140" stroke="#4f46e5" stroke-width="2"/>
+                        <line x1="160" y1="160" x2="180" y2="140" stroke="#4f46e5" stroke-width="2"/>
+                    </svg>
+                </div>
+                <div class="w-full md:w-2/3">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Apa itu Bangun Ruang?</h2>
+                    <p class="text-lg text-gray-600 leading-relaxed mb-4">
+                        Halo Sahabat Spasial! Pernahkah kamu memperhatikan benda-benda di sekitarmu seperti kotak pensil, bola basket, atau kaleng susu? Benda-benda tersebut adalah <strong>Bangun Ruang</strong>. 
+                    </p>
+                    <p class="text-lg text-gray-600 leading-relaxed">
+                        Berbeda dengan bangun datar yang hanya punya panjang dan lebar (2D), bangun ruang memiliki <strong>Volume</strong> atau isi karena memiliki panjang, lebar, dan tinggi (3D). Di sekolah nanti, dengan kartu AR, benda ini akan "melompat" keluar dari layar ponselmu!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- DAFTAR MATERI BANGUN RUANG -->
+        <div class="space-y-16">
+
+            <!-- 1. KUBUS -->
+            <div class="card-bangun bg-white rounded-[2rem] shadow-xl overflow-hidden border-2 border-indigo-100" onclick="toggleDetail('kubus-content', this)">
+                <div class="p-8">
+                    <div class="flex flex-col md:flex-row gap-8 items-start">
+                        <div class="w-full md:w-1/4">
+                            <div class="shape-container">
+                                <!-- SVG Kubus -->
+                                <svg width="120" height="120" viewBox="0 0 120 120">
+                                    <path d="M30 40 L70 40 L70 80 L30 80 Z" fill="none" stroke="#4f46e5" stroke-width="3"/>
+                                    <path d="M50 20 L90 20 L90 60 L50 60 Z" fill="none" stroke="#4f46e5" stroke-width="3" stroke-dasharray="4"/>
+                                    <path d="M30 40 L50 20 M70 40 L90 20 M70 80 L90 60 M30 80 L50 60" fill="none" stroke="#4f46e5" stroke-width="3"/>
+                                </svg>
+                            </div>
+                            <span class="block text-center font-bold text-indigo-600 bg-indigo-50 py-2 rounded-lg">KUBUS</span>
+                        </div>
+                        <div class="w-full md:w-3/4">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2">Si Kotak Sempurna</h3>
+                            <p class="text-gray-600 mb-4 italic">"Aku memiliki semua rusuk yang sama panjang, membuatku sangat seimbang."</p>
+                            <button class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-indigo-700 transition">Pelajari Selengkapnya ↓</button>
+                        </div>
+                    </div>
+
+                    <div id="kubus-content" class="hidden-detail mt-8 pt-8 border-t border-dashed border-indigo-200">
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="font-bold text-indigo-600 mb-2">Ciri-Ciri Utama:</h4>
+                                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                                    <li>6 Sisi berbentuk persegi yang sama besar.</li>
+                                    <li>12 Rusuk yang sama panjang.</li>
+                                    <li>8 Titik sudut yang runcing.</li>
+                                </ul>
+                                <h4 class="font-bold text-indigo-600 mt-4 mb-2">Dunia Nyata:</h4>
+                                <p class="text-gray-700">Dadu permainan, Rubik, kotak kado, bak mandi kotak.</p>
+                                <div class="mt-4 p-4 bg-yellow-50 rounded-xl border-l-4 border-yellow-400">
+                                    <p class="text-sm font-semibold">Visualisasi AR:</p>
+                                    <p class="text-xs text-gray-600 italic">"Saat discan, kubus akan berputar pelan menunjukkan sisi-sisi perseginya yang berkilau."</p>
+                                </div>
+                            </div>
+                            <div class="future-box p-6 rounded-2xl">
+                                <h4 class="font-bold mb-2 flex items-center">
+                                    <span class="mr-2">🚀</span> Future Thinking
+                                </h4>
+                                <p class="mb-4">Bayangkan kota masa depan di planet Mars. Jika kita menggunakan bangunan berbentuk kubus yang bisa disusun seperti Lego, apa keuntungan bagi astronot yang tinggal di sana?</p>
+                                <div class="text-xs bg-white/20 p-2 rounded">Ide: "Mudah ditambah, hemat tempat, dan stabil!"</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. BALOK -->
+            <div class="card-bangun bg-white rounded-[2rem] shadow-xl overflow-hidden border-2 border-blue-100" onclick="toggleDetail('balok-content', this)">
+                <div class="p-8">
+                    <div class="flex flex-col md:flex-row gap-8 items-start">
+                        <div class="w-full md:w-1/4">
+                            <div class="shape-container">
+                                <!-- SVG Balok -->
+                                <svg width="140" height="100" viewBox="0 0 140 100">
+                                    <rect x="20" y="35" width="80" height="40" fill="none" stroke="#0ea5e9" stroke-width="3"/>
+                                    <rect x="40" y="15" width="80" height="40" fill="none" stroke="#0ea5e9" stroke-width="3" stroke-dasharray="4"/>
+                                    <line x1="20" y1="35" x2="40" y2="15" stroke="#0ea5e9" stroke-width="3"/>
+                                    <line x1="100" y1="35" x2="120" y2="15" stroke="#0ea5e9" stroke-width="3"/>
+                                    <line x1="100" y1="75" x2="120" y2="55" stroke="#0ea5e9" stroke-width="3"/>
+                                    <line x1="20" y1="75" x2="40" y2="55" stroke="#0ea5e9" stroke-width="3"/>
+                                </svg>
+                            </div>
+                            <span class="block text-center font-bold text-blue-600 bg-blue-50 py-2 rounded-lg">BALOK</span>
+                        </div>
+                        <div class="w-full md:w-3/4">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2">Si Persegi Panjang Kekar</h3>
+                            <p class="text-gray-600 mb-4 italic">"Aku mirip kubus, tapi tubuhku lebih jenjang dan panjang."</p>
+                            <button class="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-blue-700 transition">Pelajari Selengkapnya ↓</button>
+                        </div>
+                    </div>
+
+                    <div id="balok-content" class="hidden-detail mt-8 pt-8 border-t border-dashed border-blue-200">
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="font-bold text-blue-600 mb-2">Ciri-Ciri Utama:</h4>
+                                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                                    <li>Memiliki 3 pasang sisi yang sejajar dan sama besar.</li>
+                                    <li>12 Rusuk (rusuk yang sejajar panjangnya sama).</li>
+                                    <li>8 Titik sudut.</li>
+                                </ul>
+                                <h4 class="font-bold text-blue-600 mt-4 mb-2">Dunia Nyata:</h4>
+                                <p class="text-gray-700">Batu bata, lemari pakaian, buku tulis, kotak susu.</p>
+                                <div class="mt-4 p-4 bg-blue-50 rounded-xl border-l-4 border-blue-400">
+                                    <p class="text-sm font-semibold">Visualisasi AR:</p>
+                                    <p class="text-xs text-gray-600 italic">"Model 3D balok akan memanjang dan memendek untuk menunjukkan perbedaan panjang rusuknya."</p>
+                                </div>
+                            </div>
+                            <div class="future-box p-6 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600">
+                                <h4 class="font-bold mb-2 flex items-center">
+                                    <span class="mr-2">🚀</span> Future Thinking
+                                </h4>
+                                <p class="mb-4">Jika kamu merancang bus terbang di tahun 2050, mengapa bentuk dasar balok sering dipilih dibandingkan bentuk lain?</p>
+                                <div class="text-xs bg-white/20 p-2 rounded">Ide: "Kapasitas penumpang lebih banyak dan mudah parkir!"</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. TABUNG -->
+            <div class="card-bangun bg-white rounded-[2rem] shadow-xl overflow-hidden border-2 border-teal-100" onclick="toggleDetail('tabung-content', this)">
+                <div class="p-8">
+                    <div class="flex flex-col md:flex-row gap-8 items-start">
+                        <div class="w-full md:w-1/4">
+                            <div class="shape-container">
+                                <svg width="100" height="120" viewBox="0 0 100 120">
+                                    <ellipse cx="50" cy="25" rx="35" ry="15" fill="none" stroke="#14b8a6" stroke-width="3"/>
+                                    <path d="M15 25 L15 95 A 35 15 0 0 0 85 95 L 85 25" fill="none" stroke="#14b8a6" stroke-width="3"/>
+                                    <ellipse cx="50" cy="95" rx="35" ry="15" fill="none" stroke="#14b8a6" stroke-width="3" stroke-dasharray="4"/>
+                                </svg>
+                            </div>
+                            <span class="block text-center font-bold text-teal-600 bg-teal-50 py-2 rounded-lg">TABUNG</span>
+                        </div>
+                        <div class="w-full md:w-3/4">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2">Si Bundar yang Tinggi</h3>
+                            <p class="text-gray-600 mb-4 italic">"Sisi atasku dan bawahku berbentuk lingkaran sempurna."</p>
+                            <button class="bg-teal-600 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-teal-700 transition">Pelajari Selengkapnya ↓</button>
+                        </div>
+                    </div>
+
+                    <div id="tabung-content" class="hidden-detail mt-8 pt-8 border-t border-dashed border-teal-200">
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="font-bold text-teal-600 mb-2">Ciri-Ciri Utama:</h4>
+                                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                                    <li>Punya 3 sisi (alas, tutup, dan selimut melengkung).</li>
+                                    <li>Tidak punya titik sudut.</li>
+                                    <li>Rusuknya berbentuk lingkaran (2 rusuk).</li>
+                                </ul>
+                                <h4 class="font-bold text-teal-600 mt-4 mb-2">Dunia Nyata:</h4>
+                                <p class="text-gray-700">Kaleng soda, pipa air, baterai, celengan.</p>
+                                <div class="mt-4 p-4 bg-teal-50 rounded-xl border-l-4 border-teal-400">
+                                    <p class="text-sm font-semibold">Visualisasi AR:</p>
+                                    <p class="text-xs text-gray-600 italic">"Selimut tabung akan membuka dan menunjukkan bahwa aslinya ia adalah sebuah persegi panjang!"</p>
+                                </div>
+                            </div>
+                            <div class="future-box p-6 rounded-2xl bg-gradient-to-br from-teal-500 to-green-600">
+                                <h4 class="font-bold mb-2 flex items-center">
+                                    <span class="mr-2">🚀</span> Future Thinking
+                                </h4>
+                                <p class="mb-4">Mengapa roket penjelajah angkasa luar kebanyakan berbentuk tabung silinder? Apa hubungannya dengan tekanan udara?</p>
+                                <div class="text-xs bg-white/20 p-2 rounded">Ide: "Membagi tekanan secara rata dan lebih aerodinamis!"</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. KERUCUT -->
+            <div class="card-bangun bg-white rounded-[2rem] shadow-xl overflow-hidden border-2 border-orange-100" onclick="toggleDetail('kerucut-content', this)">
+                <div class="p-8">
+                    <div class="flex flex-col md:flex-row gap-8 items-start">
+                        <div class="w-full md:w-1/4">
+                            <div class="shape-container">
+                                <svg width="100" height="120" viewBox="0 0 100 120">
+                                    <ellipse cx="50" cy="95" rx="35" ry="15" fill="none" stroke="#f59e0b" stroke-width="3"/>
+                                    <line x1="50" y1="15" x2="15" y2="95" stroke="#f59e0b" stroke-width="3"/>
+                                    <line x1="50" y1="15" x2="85" y2="95" stroke="#f59e0b" stroke-width="3"/>
+                                    <circle cx="50" cy="15" r="3" fill="#f59e0b"/>
+                                </svg>
+                            </div>
+                            <span class="block text-center font-bold text-orange-600 bg-orange-50 py-2 rounded-lg">KERUCUT</span>
+                        </div>
+                        <div class="w-full md:w-3/4">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2">Si Topi Ulang Tahun</h3>
+                            <p class="text-gray-600 mb-4 italic">"Aku punya satu titik puncak yang sangat runcing di atas."</p>
+                            <button class="bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-orange-700 transition">Pelajari Selengkapnya ↓</button>
+                        </div>
+                    </div>
+
+                    <div id="kerucut-content" class="hidden-detail mt-8 pt-8 border-t border-dashed border-orange-200">
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="font-bold text-orange-600 mb-2">Ciri-Ciri Utama:</h4>
+                                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                                    <li>Mempunyai 2 sisi (alas lingkaran dan selimut).</li>
+                                    <li>Mempunyai 1 rusuk lengkung.</li>
+                                    <li>Mempunyai 1 titik puncak.</li>
+                                </ul>
+                                <h4 class="font-bold text-orange-600 mt-4 mb-2">Dunia Nyata:</h4>
+                                <p class="text-gray-700">Topi pesta, cone es krim, pembatas jalan (traffic cone).</p>
+                                <div class="mt-4 p-4 bg-orange-50 rounded-xl border-l-4 border-orange-400">
+                                    <p class="text-sm font-semibold">Visualisasi AR:</p>
+                                    <p class="text-xs text-gray-600 italic">"Garis tinggi kerucut akan muncul dari tengah alas ke puncak saat discan."</p>
+                                </div>
+                            </div>
+                            <div class="future-box p-6 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500">
+                                <h4 class="font-bold mb-2 flex items-center">
+                                    <span class="mr-2">🚀</span> Future Thinking
+                                </h4>
+                                <p class="mb-4">Jika kita membuat tenda darurat di bulan yang sering terkena badai kosmik, apakah bentuk kerucut cukup stabil menahan angin?</p>
+                                <div class="text-xs bg-white/20 p-2 rounded">Ide: "Angin akan lewat lewat sisi lengkungnya tanpa merobohkannya!"</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. BOLA -->
+            <div class="card-bangun bg-white rounded-[2rem] shadow-xl overflow-hidden border-2 border-pink-100" onclick="toggleDetail('bola-content', this)">
+                <div class="p-8">
+                    <div class="flex flex-col md:flex-row gap-8 items-start">
+                        <div class="w-full md:w-1/4">
+                            <div class="shape-container">
+                                <svg width="100" height="100" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="40" fill="none" stroke="#ec4899" stroke-width="3"/>
+                                    <ellipse cx="50" cy="50" rx="40" ry="12" fill="none" stroke="#ec4899" stroke-width="2" stroke-dasharray="4"/>
+                                </svg>
+                            </div>
+                            <span class="block text-center font-bold text-pink-600 bg-pink-50 py-2 rounded-lg">BOLA</span>
+                        </div>
+                        <div class="w-full md:w-3/4">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2">Si Bundar Tak Bertepi</h3>
+                            <p class="text-gray-600 mb-4 italic">"Aku adalah bangun yang paling fleksibel karena bisa menggelinding ke mana saja."</p>
+                            <button class="bg-pink-600 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-pink-700 transition">Pelajari Selengkapnya ↓</button>
+                        </div>
+                    </div>
+
+                    <div id="bola-content" class="hidden-detail mt-8 pt-8 border-t border-dashed border-pink-200">
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="font-bold text-pink-600 mb-2">Ciri-Ciri Utama:</h4>
+                                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                                    <li>Hanya memiliki 1 sisi (sisi lengkung).</li>
+                                    <li>Tidak memiliki rusuk.</li>
+                                    <li>Tidak memiliki titik sudut.</li>
+                                </ul>
+                                <h4 class="font-bold text-pink-600 mt-4 mb-2">Dunia Nyata:</h4>
+                                <p class="text-gray-700">Bola sepak, kelereng, buah melon, Bumi kita!</p>
+                                <div class="mt-4 p-4 bg-pink-50 rounded-xl border-l-4 border-pink-400">
+                                    <p class="text-sm font-semibold">Visualisasi AR:</p>
+                                    <p class="text-xs text-gray-600 italic">"Bola AR akan memantul-mantul di atas kartu seolah-olah ada gravitasi sungguhan."</p>
+                                </div>
+                            </div>
+                            <div class="future-box p-6 rounded-2xl bg-gradient-to-br from-pink-500 to-purple-600">
+                                <h4 class="font-bold mb-2 flex items-center">
+                                    <span class="mr-2">🚀</span> Future Thinking
+                                </h4>
+                                <p class="mb-4">Menurutmu, mengapa robot penjelajah bawah laut sering berbentuk bulat atau bola?</p>
+                                <div class="text-xs bg-white/20 p-2 rounded">Ide: "Supaya kuat menahan tekanan air dari segala arah!"</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. PRISMA -->
+            <div class="card-bangun bg-white rounded-[2rem] shadow-xl overflow-hidden border-2 border-green-100" onclick="toggleDetail('prisma-content', this)">
+                <div class="p-8">
+                    <div class="flex flex-col md:flex-row gap-8 items-start">
+                        <div class="w-full md:w-1/4">
+                            <div class="shape-container">
+                                <svg width="100" height="120" viewBox="0 0 100 120">
+                                    <polygon points="50,20 20,50 80,50" fill="none" stroke="#10b981" stroke-width="3"/>
+                                    <path d="M50 20 L50 90 M20 50 L20 120 M80 50 L80 120" fill="none" stroke="#10b981" stroke-width="3"/>
+                                    <polygon points="50,90 20,120 80,120" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="4"/>
+                                </svg>
+                            </div>
+                            <span class="block text-center font-bold text-green-600 bg-green-50 py-2 rounded-lg">PRISMA</span>
+                        </div>
+                        <div class="w-full md:w-3/4">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2">Si Atap Rumah</h3>
+                            <p class="text-gray-600 mb-4 italic">"Namaku tergantung bentuk alas dan tutupku. Aku sangat kokoh!"</p>
+                            <button class="bg-green-600 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-green-700 transition">Pelajari Selengkapnya ↓</button>
+                        </div>
+                    </div>
+
+                    <div id="prisma-content" class="hidden-detail mt-8 pt-8 border-t border-dashed border-green-200">
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="font-bold text-green-600 mb-2">Ciri-Ciri (Segitiga):</h4>
+                                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                                    <li>Memiliki 5 sisi.</li>
+                                    <li>Memiliki 9 rusuk.</li>
+                                    <li>Memiliki 6 titik sudut.</li>
+                                </ul>
+                                <h4 class="font-bold text-green-600 mt-4 mb-2">Dunia Nyata:</h4>
+                                <p class="text-gray-700">Tenda pramuka, cokelat Toblerone, atap rumah.</p>
+                                <div class="mt-4 p-4 bg-green-50 rounded-xl border-l-4 border-green-400">
+                                    <p class="text-sm font-semibold">Visualisasi AR:</p>
+                                    <p class="text-xs text-gray-600 italic">"AR akan menunjukkan bagaimana prisma segitiga terbentuk dari penumpukan segitiga yang sama tinggi."</p>
+                                </div>
+                            </div>
+                            <div class="future-box p-6 rounded-2xl bg-gradient-to-br from-green-500 to-teal-600">
+                                <h4 class="font-bold mb-2 flex items-center">
+                                    <span class="mr-2">🚀</span> Future Thinking
+                                </h4>
+                                <p class="mb-4">Rumah masa depan yang tahan gempa sering menggunakan struktur segitiga (prisma). Kenapa segitiga dianggap bentuk paling kaku?</p>
+                                <div class="text-xs bg-white/20 p-2 rounded">Ide: "Segitiga tidak mudah berubah bentuk meskipun ditekan!"</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Latihan Penguatan Spasial -->
+        <section class="mt-20 bg-white p-10 rounded-[3rem] shadow-2xl border-4 border-indigo-200">
+            <h2 class="text-3xl font-bold text-center text-indigo-700 mb-10">🧠 Tantangan Imajinasi Spasial</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Soal 1 -->
+                <div class="p-6 bg-indigo-50 rounded-2xl border border-indigo-100">
+                    <p class="font-bold text-indigo-800 mb-3">1. Rotasi Mental</p>
+                    <p class="text-gray-700 mb-4 text-sm">Bayangkan sebuah dadu (kubus). Jika dadu itu kamu gulingkan ke arah kanan sebanyak 2 kali, sisi yang tadinya di atas akan berada di mana?</p>
+                    <button onclick="checkAns(this, 'Tetap di atas, tapi posisinya berputar!')" class="text-xs font-bold text-indigo-600 underline">Lihat Petunjuk Petualang</button>
+                </div>
+                <!-- Soal 2 -->
+                <div class="p-6 bg-pink-50 rounded-2xl border border-pink-100">
+                    <p class="font-bold text-pink-800 mb-3">2. Posisi Ruang</p>
+                    <p class="text-gray-700 mb-4 text-sm">Di dalam sebuah balok lemari, ada sebuah laci di pojok kiri bawah depan. Jika kamu berdiri di belakang lemari, laci itu ada di pojok mana?</p>
+                    <button onclick="checkAns(this, 'Pojok kanan bawah belakang!')" class="text-xs font-bold text-pink-600 underline">Lihat Petunjuk Petualang</button>
+                </div>
+                <!-- Soal 3 -->
+                <div class="p-6 bg-yellow-50 rounded-2xl border border-yellow-100">
+                    <p class="font-bold text-yellow-800 mb-3">3. Perubahan Bentuk</p>
+                    <p class="text-gray-700 mb-4 text-sm">Jika sebuah tabung ditekan dari atas sampai gepeng, bangun ruang itu akan mendekati bentuk apa?</p>
+                    <button onclick="checkAns(this, 'Bentuk silinder pendek atau koin!')" class="text-xs font-bold text-yellow-600 underline">Lihat Petunjuk Petualang</button>
+                </div>
+                <!-- Soal 4 -->
+                <div class="p-6 bg-green-50 rounded-2xl border border-green-100">
+                    <p class="font-bold text-green-800 mb-3">4. Bayangan Masa Depan</p>
+                    <p class="text-gray-700 mb-4 text-sm">Gabungkan 1 bola besar dan 1 tabung panjang di bawahnya. Menyerupai kendaraan masa depan apa ini?</p>
+                    <button onclick="checkAns(this, 'Bisa jadi Menara Kontrol Udara atau Stasiun Ruang Angkasa!')" class="text-xs font-bold text-green-600 underline">Lihat Petunjuk Petualang</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ringkasan Naratif -->
+        <section class="mt-16 bg-indigo-900 text-white p-10 rounded-[3rem] shadow-xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-8 opacity-20">
+                <svg width="100" height="100" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" fill="white"/>
+                </svg>
+            </div>
+            <h2 class="text-3xl font-bold mb-6">Pesan untuk Arsitek Masa Depan</h2>
+            <div class="text-lg leading-relaxed space-y-4 opacity-90">
+                <p>
+                    Belajar bangun ruang bukan hanya tentang menghitung sisi dan rusuk. Ini adalah latihan bagi otakmu untuk melihat dunia dalam <strong>Tiga Dimensi</strong>. Dengan bantuan kartu AR nanti, kamu akan belajar bagaimana sebuah objek mengisi ruang di sekitar kita.
+                </p>
+                <p>
+                    Di masa depan, kamu mungkin akan membangun pangkalan di bulan menggunakan <strong>Bola</strong> karena kekuatannya, atau menciptakan mobil terbang berbentuk <strong>Balok aerodinamis</strong>. Kemampuanmu membayangkan bentuk-bentuk ini dalam pikiran (spasial) adalah kunci untuk menciptakan inovasi hebat!
+                </p>
+                <p class="font-bold text-yellow-400">
+                    Teruslah bereksplorasi, teruslah membayangkan, karena dunia masa depan ada di tanganmu!
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+
+
+    <script>
+        function toggleDetail(id, element) {
+            const content = document.getElementById(id);
+            const isHidden = content.style.display === "none" || content.style.display === "";
+            
+            // Sembunyikan semua detail terlebih dahulu untuk fokus
+            document.querySelectorAll('.hidden-detail').forEach(el => {
+                el.style.display = 'none';
+            });
+
+            if (isHidden) {
+                content.style.display = "block";
+                content.classList.add('animate-fade-in');
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                element.classList.add('ring-4', 'ring-indigo-300');
+            } else {
+                content.style.display = "none";
+                element.classList.remove('ring-4', 'ring-indigo-300');
+            }
+        }
+
+        function checkAns(btn, text) {
+            const originalText = btn.innerText;
+            if (btn.innerText === "Lihat Petunjuk Petualang") {
+                btn.innerText = "Jawaban: " + text;
+                btn.classList.add('text-indigo-800', 'bg-white', 'p-2', 'rounded-lg', 'no-underline');
+            } else {
+                btn.innerText = "Lihat Petunjuk Petualang";
+                btn.classList.remove('text-indigo-800', 'bg-white', 'p-2', 'rounded-lg', 'no-underline');
+            }
+        }
+
+        // Animasi muncul saat scroll
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-10');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.card-bangun').forEach(card => {
+            card.classList.add('transform', 'transition', 'duration-700', 'opacity-0', 'translate-y-10');
+            observer.observe(card);
+        });
+    </script>
+
+    <style>
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fade-in 0.4s ease-out forwards;
+        }
+    </style>
+</body>
+</html>

@@ -1,0 +1,211 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimal-ui" />
+  <title>AR Bangun Ruang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ar.js@4.4.0/aframe/build/aframe-ar.js"></script>
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    /* Wajib transparan agar kamera dari AR.js terlihat */
+    html, body { width: 100%; height: 100%; overflow: hidden; background-color: transparent !important; font-family: 'Nunito', sans-serif; }
+
+    /* UI Styles */
+    #ui-overlay { position: fixed; inset: 0; z-index: 100; pointer-events: none; }
+    #ui-overlay button, #ui-overlay a, #ui-overlay .panel { pointer-events: auto; }
+    #back-btn { position: fixed; top: 20px; left: 20px; z-index: 110; display: flex; align-items: center; gap: 8px; padding: 10px 18px; background: rgba(0, 0, 0, 0.55); border: 1px solid rgba(0, 220, 255, 0.45); border-radius: 100px; color: #fff; font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    #info-toggle { position: fixed; top: 20px; right: 20px; z-index: 110; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.55); border: 1px solid rgba(0, 220, 255, 0.45); border-radius: 50%; color: #00dcff; cursor: pointer; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); font-size: 20px; font-weight: 700; font-family: 'Rajdhani', sans-serif; }
+    #status-bar { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 110; display: flex; align-items: center; gap: 10px; padding: 10px 22px; background: rgba(0, 0, 0, 0.55); border: 1px solid rgba(0, 220, 255, 0.3); border-radius: 100px; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); white-space: nowrap; max-width: 90vw; }
+    .status-dot { width: 9px; height: 9px; border-radius: 50%; background: #00dcff; box-shadow: 0 0 8px #00dcff; animation: pulse-dot 1.5s ease-in-out infinite; }
+    @keyframes pulse-dot { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.7); } }
+    #status-text { color: #e0f6ff; font-family: 'Rajdhani', sans-serif; font-size: 14px; font-weight: 500; letter-spacing: 0.5px; }
+    
+    #info-panel { position: fixed; top: 0; right: 0; height: 100%; width: min(340px, 92vw); z-index: 120; background: rgba(5, 10, 25, 0.88); border-left: 1px solid rgba(0, 220, 255, 0.25); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 24px; overflow-y: auto; transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1); color: #eaf7ff; }
+    #info-panel.open { transform: translateX(0); }
+    #info-panel h2 { font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700; color: #00dcff; margin-bottom: 6px; letter-spacing: 1px; text-transform: uppercase; }
+    #info-panel .subtitle { font-size: 13px; color: rgba(200,220,240,0.65); margin-bottom: 16px; line-height: 1.5; }
+    .marker-item { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(0, 220, 255, 0.15); background: rgba(0, 220, 255, 0.05); margin-bottom: 10px; }
+    .marker-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+    .marker-name { font-family: 'Rajdhani', sans-serif; font-size: 17px; font-weight: 700; color: #e0f0ff; letter-spacing: 0.5px; }
+    .marker-file { font-size: 11px; color: rgba(160,200,220,0.55); margin-top: 1px; }
+
+    /* Loading Screen Kustom */
+    #loading-screen {
+      position: fixed; inset: 0; z-index: 9999;
+      background: #0f172a; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 20px;
+      color: #fff; font-family: 'Nunito', sans-serif; transition: opacity 0.5s ease;
+      text-align: center; padding: 20px;
+    }
+    .spinner {
+      width: 50px; height: 50px; border: 5px solid rgba(0, 220, 255, 0.3);
+      border-top-color: #00dcff; border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    #error-icon { display: none; width: 60px; height: 60px; stroke: #ff6b6b; stroke-width: 2; fill: none; margin-bottom: 10px; }
+    #reload-btn {
+      display: none; padding: 12px 28px; margin-top: 15px; background: #00dcff; border: none; border-radius: 100px;
+      color: #0f172a; font-weight: bold; font-family: 'Rajdhani', sans-serif; font-size: 16px; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="loading-screen">
+    <svg id="error-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+    <div class="spinner" id="spinner"></div>
+    <h2 id="loading-title">Memuat Kamera AR...</h2>
+    <p id="loading-desc" style="font-size: 14px; color: #94a3b8; max-width: 300px;">Mohon izinkan akses kamera pada browser Anda.</p>
+    <button id="reload-btn" onclick="location.reload()">Muat Ulang Halaman</button>
+  </div>
+
+  <a-scene 
+    embedded 
+    vr-mode-ui="enabled: false" 
+    renderer="antialias: true; alpha: true; logarithmicDepthBuffer: true;" 
+    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;">
+    
+    <a-marker type="pattern" url="marker/balok.patt" id="marker-balok">
+      <a-box position="0 0.5 0" rotation="0 45 0" scale="0.6 0.4 0.8" material="color: #2563eb; metalness: 0.3; roughness: 0.5; opacity: 0.95"></a-box>
+      <a-text value="BALOK" position="0 1.1 0" align="center" color="#ffffff" scale="0.6 0.6 0.6" look-at="[camera]"></a-text>
+    </a-marker>
+    <a-marker type="pattern" url="marker/bola.patt" id="marker-bola">
+      <a-sphere radius="0.35" position="0 0.35 0" material="color: #f97316; metalness: 0.3; roughness: 0.3"></a-sphere>
+      <a-text value="BOLA" position="0 0.9 0" align="center" color="#ffffff" scale="0.6 0.6 0.6" look-at="[camera]"></a-text>
+    </a-marker>
+    <a-marker type="pattern" url="marker/kerucut.patt" id="marker-kerucut">
+      <a-cone radius-bottom="0.35" height="0.7" position="0 0.35 0" material="color: #22c55e; metalness: 0.2; roughness: 0.4"></a-cone>
+      <a-text value="KERUCUT" position="0 0.95 0" align="center" color="#ffffff" scale="0.6 0.6 0.6" look-at="[camera]"></a-text>
+    </a-marker>
+    <a-marker type="pattern" url="marker/kubus.patt" id="marker-kubus">
+      <a-box position="0 0.5 0" rotation="0 35 0" scale="0.5 0.5 0.5" material="color: #8b5cf6; metalness: 0.25; roughness: 0.4"></a-box>
+      <a-text value="KUBUS" position="0 1.0 0" align="center" color="#ffffff" scale="0.6 0.6 0.6" look-at="[camera]"></a-text>
+    </a-marker>
+    <a-marker type="pattern" url="marker/limas.patt" id="marker-limas">
+      <a-entity position="0 0.5 0" geometry="primitive: tetrahedron; radius: 0.45" material="color: #ef4444; metalness: 0.2; roughness: 0.5"></a-entity>
+      <a-text value="LIMAS" position="0 1.1 0" align="center" color="#ffffff" scale="0.6 0.6 0.6" look-at="[camera]"></a-text>
+    </a-marker>
+    <a-marker type="pattern" url="marker/prisma.patt" id="marker-prisma">
+      <a-entity position="0 0.5 0" rotation="0 45 0" geometry="primitive: cylinder; radiusTop: 0.28; radiusBottom: 0.28; height: 0.8; segmentsRadial: 3" material="color: #0ea5e9; metalness: 0.2; roughness: 0.4"></a-entity>
+      <a-text value="PRISMA" position="0 1.1 0" align="center" color="#ffffff" scale="0.6 0.6 0.6" look-at="[camera]"></a-text>
+    </a-marker>
+    <a-marker type="pattern" url="marker/tabung.patt" id="marker-tabung">
+      <a-cylinder radius="0.32" height="0.7" position="0 0.35 0" material="color: #22d3ee; metalness: 0.2; roughness: 0.4"></a-cylinder>
+      <a-text value="TABUNG" position="0 0.95 0" align="center" color="#ffffff" scale="0.6 0.6 0.6" look-at="[camera]"></a-text>
+    </a-marker>
+    
+    <a-entity camera></a-entity>
+  </a-scene>
+
+  <div id="ui-overlay">
+    <button id="back-btn" onclick="goBack()">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" style="stroke:#00dcff">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Kembali
+    </button>
+    <button id="info-toggle" onclick="togglePanel()" title="Daftar Marker">☰</button>
+    <div id="status-bar">
+      <div class="status-dot"></div>
+      <span id="status-text">Arahkan kamera ke marker</span>
+    </div>
+  </div>
+
+  <div id="info-panel">
+    <h2>Bangun Ruang AR</h2>
+    <p class="subtitle">Arahkan kamera ke salah satu marker pada folder <b>marker/</b> untuk menampilkan objek 3D.</p>
+    <div class="marker-item"><div class="marker-dot" style="background:#2563eb;"></div><div><div class="marker-name">Balok</div><div class="marker-file">marker/balok.patt</div></div></div>
+    <div class="marker-item"><div class="marker-dot" style="background:#f97316;"></div><div><div class="marker-name">Bola</div><div class="marker-file">marker/bola.patt</div></div></div>
+    <div class="marker-item"><div class="marker-dot" style="background:#22c55e;"></div><div><div class="marker-name">Kerucut</div><div class="marker-file">marker/kerucut.patt</div></div></div>
+    <div class="marker-item"><div class="marker-dot" style="background:#8b5cf6;"></div><div><div class="marker-name">Kubus</div><div class="marker-file">marker/kubus.patt</div></div></div>
+    <div class="marker-item"><div class="marker-dot" style="background:#ef4444;"></div><div><div class="marker-name">Limas</div><div class="marker-file">marker/limas.patt</div></div></div>
+    <div class="marker-item"><div class="marker-dot" style="background:#0ea5e9;"></div><div><div class="marker-name">Prisma</div><div class="marker-file">marker/prisma.patt</div></div></div>
+    <div class="marker-item"><div class="marker-dot" style="background:#22d3ee;"></div><div><div class="marker-name">Tabung</div><div class="marker-file">marker/tabung.patt</div></div></div>
+  </div>
+
+  <script>
+    // 1. Logika Panel Bantuan UI
+    const panel = document.getElementById('info-panel');
+    function togglePanel(){ panel.classList.toggle('open'); }
+    document.addEventListener('click', (e)=>{
+      if(panel.classList.contains('open') && !panel.contains(e.target) && e.target.id !== 'info-toggle'){
+        panel.classList.remove('open');
+      }
+    });
+
+    function goBack(){
+      if(window.history.length > 1) window.history.back();
+      else window.location.href = 'index.html'; // Sesuaikan URL kembali
+    }
+
+    // 2. Deteksi AR.js Native Event (Paling Stabil)
+    const loadingScreen = document.getElementById('loading-screen');
+    const loadingTitle = document.getElementById('loading-title');
+    const loadingDesc = document.getElementById('loading-desc');
+    const spinner = document.getElementById('spinner');
+    const errorIcon = document.getElementById('error-icon');
+    const reloadBtn = document.getElementById('reload-btn');
+
+    // Jika kamera berhasil menyala
+    window.addEventListener('camera-init', () => {
+      loadingScreen.style.opacity = '0';
+      setTimeout(() => { loadingScreen.style.display = 'none'; }, 500);
+    });
+
+    // Jika hardware gagal atau izin ditolak oleh browser
+    window.addEventListener('camera-error', () => {
+      spinner.style.display = 'none';
+      errorIcon.style.display = 'block';
+      reloadBtn.style.display = 'block';
+      loadingTitle.innerText = 'Kamera Gagal Dimuat';
+      loadingTitle.style.color = '#ff6b6b';
+      loadingDesc.innerHTML = 'Pastikan <b>izin kamera</b> diberikan pada ikon gembok di browser, dan tidak ada aplikasi lain (Zoom/GMeet) yang sedang memakai kamera laptopmu.';
+    });
+
+    // Fallback cerdas: Jika dalam 1 detik video sudah ter-load duluan sebelum event 'camera-init' tertangkap
+    const videoCheck = setInterval(() => {
+      const video = document.querySelector('video');
+      if (video && video.readyState >= 3) {
+        clearInterval(videoCheck);
+        loadingScreen.style.opacity = '0';
+        setTimeout(() => { loadingScreen.style.display = 'none'; }, 500);
+      }
+    }, 500);
+
+    // 3. Logika Pembaruan Status Marker di UI
+    const statusText = document.getElementById('status-text');
+    const markerNames = {
+      'marker-balok': 'Balok terdeteksi', 'marker-bola': 'Bola terdeteksi',
+      'marker-kerucut': 'Kerucut terdeteksi', 'marker-kubus': 'Kubus terdeteksi',
+      'marker-limas': 'Limas terdeteksi', 'marker-prisma': 'Prisma terdeteksi',
+      'marker-tabung': 'Tabung terdeteksi'
+    };
+    const activeMarkers = new Set();
+    
+    function updateStatus(){
+      if(activeMarkers.size === 0){
+        statusText.textContent = 'Arahkan kamera ke marker';
+      }else{
+        statusText.textContent = [...activeMarkers].map(id => markerNames[id] || id).join(' · ');
+      }
+    }
+
+    window.addEventListener('load', ()=>{
+      Object.keys(markerNames).forEach(id => {
+        const el = document.getElementById(id);
+        if(!el) return;
+        el.addEventListener('markerFound', ()=>{ activeMarkers.add(id); updateStatus(); });
+        el.addEventListener('markerLost', ()=>{ activeMarkers.delete(id); updateStatus(); });
+      });
+    });
+  </script>
+</body>
+</html>

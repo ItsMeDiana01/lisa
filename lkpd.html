@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LKPD Interaktif Bangun Ruang - Future Thinking</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- html2pdf Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #0ea5e9;
+            --bg-child: #f0fdf4;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--bg-child);
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(14, 165, 233, 0.07) 0%, transparent 20%),
+                radial-gradient(circle at 90% 90%, rgba(79, 70, 229, 0.07) 0%, transparent 20%);
+            scroll-behavior: smooth;
+        }
+
+        .header-font { font-family: 'Space+Grotesk', sans-serif; }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .section-card {
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .section-card.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-focus:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+            outline: none;
+        }
+
+        .shape-decor {
+            position: fixed; z-index: -1; opacity: 0.1;
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Styles for PDF Generation */
+        #pdf-content { padding: 20px; color: #1e293b; }
+        .pdf-only { display: none; }
+    </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen">
+
+    <!-- Audio Element -->
+    <audio id="bgMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Floating Decor -->
+    <div class="shape-decor top-10 left-10 text-indigo-400"><i data-lucide="box" size="80"></i></div>
+    <div class="shape-decor bottom-10 right-10 text-sky-400"><i data-lucide="pyramid" size="100"></i></div>
+
+    <!-- Main Wrapper for PDF -->
+    <div id="lkpd-area">
+        
+        <!-- Header & Musik Control -->
+        <div class="max-w-4xl mx-auto flex justify-between items-center mb-8">
+            <div id="pdf-header">
+                <h1 class="header-font text-3xl font-bold text-indigo-900 leading-tight">LKPD INTERAKTIF<br><span class="text-sky-500 text-2xl">BANGUN RUANG DIGITAL</span></h1>
+                <p class="text-indigo-600 font-semibold italic text-sm">Muatan Spasial & Future Thinking • Kelas V SD</p>
+            </div>
+            <div class="flex gap-2 no-print">
+                <button id="musicToggle" class="bg-white border-2 border-indigo-100 p-3 rounded-2xl shadow-sm hover:bg-indigo-50 transition-all flex items-center gap-2">
+                    <span id="musicIcon" class="text-indigo-600"><i data-lucide="volume-x"></i></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="max-w-4xl mx-auto space-y-6">
+            
+            <!-- Section 1: Identitas & Petunjuk -->
+            <div id="section-identitas" class="glass-card rounded-3xl p-6 md:p-8 shadow-lg border-indigo-100">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Identitas -->
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-2 mb-2 text-indigo-900">
+                            <i data-lucide="id-card" size="20"></i>
+                            <h2 class="font-bold">Identitas Siswa</h2>
+                        </div>
+                        <div class="grid grid-cols-1 gap-3">
+                            <input type="text" id="namaSekolah" placeholder="Nama Sekolah" class="input-focus w-full p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            <div class="grid grid-cols-2 gap-3">
+                                <input type="text" id="kelas" placeholder="Kelas / Sem" class="input-focus p-3 bg-slate-50 rounded-xl border border-slate-200">
+                                <input type="date" id="tanggal" class="input-focus p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            </div>
+                            <input type="text" id="namaSiswa" oninput="checkCompletion()" placeholder="Nama Lengkap Kamu (Wajib)" class="input-focus w-full p-3 bg-white font-bold rounded-xl border-2 border-indigo-200 text-indigo-900">
+                        </div>
+                    </div>
+
+                    <!-- Petunjuk -->
+                    <div class="bg-indigo-50 rounded-2xl p-6 border-2 border-dashed border-indigo-200">
+                        <h2 class="font-bold text-indigo-900 mb-3 flex items-center gap-2">
+                            <i data-lucide="book-open" size="18"></i> Petunjuk Kerja
+                        </h2>
+                        <ul class="text-sm text-indigo-800 space-y-2">
+                            <li>✨ Bacalah setiap perintah dengan teliti.</li>
+                            <li>🔍 Amati bangun ruang di media AR kamu.</li>
+                            <li>🧠 Bayangkan bentuknya dalam pikiranmu (3D).</li>
+                            <li>📝 Isi semua jawaban dengan jujur.</li>
+                            <li>📥 Unduh hasil belajarmu di akhir kegiatan.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Tracker -->
+            <div class="flex justify-between items-center max-w-md mx-auto no-print">
+                <div id="step-1" class="h-3 w-1/4 rounded-full bg-indigo-600 mx-1 transition-all"></div>
+                <div id="step-2" class="h-3 w-1/4 rounded-full bg-slate-200 mx-1 transition-all"></div>
+                <div id="step-3" class="h-3 w-1/4 rounded-full bg-slate-200 mx-1 transition-all"></div>
+                <div id="step-4" class="h-3 w-1/4 rounded-full bg-slate-200 mx-1 transition-all"></div>
+            </div>
+
+            <!-- KEGIATAN 1: MENGAMATI -->
+            <div id="content1" class="section-card active glass-card rounded-3xl p-6 md:p-8 shadow-lg">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="bg-indigo-600 p-3 rounded-xl text-white"><i data-lucide="search"></i></div>
+                    <h3 class="font-bold text-xl text-indigo-900">Kegiatan 1: Mengamati Ciri Bangun Ruang</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left bg-white rounded-xl overflow-hidden border border-slate-200">
+                        <thead class="bg-indigo-50">
+                            <tr>
+                                <th class="p-4 border-b">Nama Bangun</th>
+                                <th class="p-4 border-b">Sisi</th>
+                                <th class="p-4 border-b">Rusuk</th>
+                                <th class="p-4 border-b">Titik Sudut</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr>
+                                <td class="p-4 font-semibold">Kubus</td>
+                                <td class="p-4"><input type="number" class="w-16 p-2 border rounded q1" placeholder="?"></td>
+                                <td class="p-4"><input type="number" class="w-16 p-2 border rounded q1" placeholder="?"></td>
+                                <td class="p-4"><input type="number" class="w-16 p-2 border rounded q1" placeholder="?"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-semibold">Balok</td>
+                                <td class="p-4"><input type="number" class="w-16 p-2 border rounded q1" placeholder="?"></td>
+                                <td class="p-4"><input type="number" class="w-16 p-2 border rounded q1" placeholder="?"></td>
+                                <td class="p-4"><input type="number" class="w-16 p-2 border rounded q1" placeholder="?"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-semibold">Tabung</td>
+                                <td class="p-4"><input type="number" class="w-16 p-2 border rounded q1" placeholder="?"></td>
+                                <td class="p-4"><input type="number" class="w-16 p-2 border rounded q1" placeholder="?"></td>
+                                <td class="p-4"><input type="number" class="w-16 p-2 border rounded q1" placeholder="?"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- KEGIATAN 2: SPASIAL -->
+            <div id="content2" class="section-card glass-card rounded-3xl p-6 md:p-8 shadow-lg">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="bg-sky-500 p-3 rounded-xl text-white"><i data-lucide="eye"></i></div>
+                    <h3 class="font-bold text-xl text-indigo-900">Kegiatan 2: Kemampuan Spasial</h3>
+                </div>
+                <div class="space-y-6">
+                    <div class="bg-slate-50 p-5 rounded-2xl border">
+                        <p class="font-bold mb-3 text-slate-700">1. Bayangkan sebuah Kubus diputar 90° ke arah KANAN. Sisi yang awalnya ada di KIRI sekarang berada di posisi mana?</p>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="flex items-center gap-2 p-3 bg-white border rounded-xl cursor-pointer hover:bg-sky-50">
+                                <input type="radio" name="spasial1" value="Depan" class="w-4 h-4"> <span>Depan</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-3 bg-white border rounded-xl cursor-pointer hover:bg-sky-50">
+                                <input type="radio" name="spasial1" value="Atas" class="w-4 h-4"> <span>Atas</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 p-5 rounded-2xl border">
+                        <p class="font-bold mb-3 text-slate-700">2. Sebutkan satu benda di sekitarmu yang berbentuk Balok tetapi posisinya miring/berdiri tegak!</p>
+                        <input type="text" id="spasial2" class="w-full p-4 rounded-xl border input-focus" placeholder="Tulis jawabanmu...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- KEGIATAN 3: FUTURE THINKING -->
+            <div id="content3" class="section-card glass-card rounded-3xl p-6 md:p-8 shadow-lg">
+                <div class="flex items-center gap-4 mb-6 text-rose-600">
+                    <div class="bg-rose-500 p-3 rounded-xl text-white"><i data-lucide="rocket"></i></div>
+                    <h3 class="font-bold text-xl">Kegiatan 3: Future Thinking (Masa Depan)</h3>
+                </div>
+                <div class="space-y-4">
+                    <div class="bg-rose-50 p-5 rounded-2xl border border-rose-100">
+                        <p class="font-bold text-rose-900 mb-2">Menurutmu, bentuk bangun ruang apa yang paling cocok untuk bangunan masa depan di planet Mars agar tahan badai dan hemat ruang? Mengapa?</p>
+                        <textarea id="future1" rows="3" class="w-full p-4 rounded-xl border-2 border-rose-200 input-focus" placeholder="Gunakan imajinasimu..."></textarea>
+                    </div>
+                    <div class="bg-rose-50 p-5 rounded-2xl border border-rose-100">
+                        <p class="font-bold text-rose-900 mb-2">Bagaimana bentuk gedung sekolah masa depan menurut imajinasimu?</p>
+                        <textarea id="future2" rows="3" class="w-full p-4 rounded-xl border-2 border-rose-200 input-focus" placeholder="Gambarkan dengan kata-kata..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KEGIATAN 4: REFLEKSI -->
+            <div id="content4" class="section-card glass-card rounded-3xl p-6 md:p-8 shadow-lg">
+                <div class="flex items-center gap-4 mb-6 text-emerald-600">
+                    <div class="bg-emerald-500 p-3 rounded-xl text-white"><i data-lucide="heart"></i></div>
+                    <h3 class="font-bold text-xl">Kegiatan 4: Refleksi Belajar</h3>
+                </div>
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="space-y-2">
+                        <label class="font-semibold text-slate-600">Bangun ruang apa yang paling kamu pahami hari ini?</label>
+                        <input type="text" id="refleksi1" class="w-full p-3 rounded-xl border bg-emerald-50 border-emerald-100">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="font-semibold text-slate-600">Bagaimana perasaanmu belajar menggunakan Augmented Reality (AR)?</label>
+                        <textarea id="refleksi2" class="w-full p-3 rounded-xl border bg-emerald-50 border-emerald-100"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            
+
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full bg-slate-900 text-white opacity-0 transition-all z-[100] text-sm font-bold">Pesan Toast</div>
+
+    <script>
+        // Init Lucide
+        lucide.createIcons();
+
+        // Music
+        const music = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicToggle');
+        let isPlaying = false;
+
+        musicBtn.addEventListener('click', () => {
+            if(!isPlaying) {
+                music.play().catch(() => showToast("Aktifkan musik lewat browser!"));
+                document.getElementById('musicIcon').innerHTML = '<i data-lucide="volume-2"></i>';
+            } else {
+                music.pause();
+                document.getElementById('musicIcon').innerHTML = '<i data-lucide="volume-x"></i>';
+            }
+            isPlaying = !isPlaying;
+            lucide.createIcons();
+        });
+
+        // Navigation
+        let step = 1;
+        const total = 4;
+
+        function move(delta) {
+            if(delta === 1 && step === 1 && document.getElementById('namaSiswa').value === "") {
+                showToast("Isi namamu dulu ya! 😊");
+                return;
+            }
+
+            document.getElementById(`content${step}`).classList.remove('active');
+            document.getElementById(`step-${step}`).classList.replace('bg-indigo-600', 'bg-slate-200');
+            
+            step += delta;
+            
+            document.getElementById(`content${step}`).classList.add('active');
+            document.getElementById(`step-${step}`).classList.replace('bg-slate-200', 'bg-indigo-600');
+
+            document.getElementById('prevBtn').classList.toggle('hidden', step === 1);
+            document.getElementById('nextBtn').classList.toggle('hidden', step === total);
+            
+            window.scrollTo(0, 0);
+            checkCompletion();
+        }
+
+        function checkCompletion() {
+            const name = document.getElementById('namaSiswa').value;
+            const pdfBtn = document.getElementById('pdfBtn');
+            pdfBtn.disabled = (name === "");
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.classList.add('opacity-100', '-translate-y-5');
+            setTimeout(() => t.classList.remove('opacity-100', '-translate-y-5'), 3000);
+        }
+
+        function resetLKPD() {
+            if(confirm("Hapus semua jawaban?")) location.reload();
+        }
+
+        // PDF Generation
+        async function generatePDF() {
+            const btn = document.getElementById('pdfBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "Sedang Menyiapkan...";
+            btn.disabled = true;
+
+            const name = document.getElementById('namaSiswa').value;
+            const element = document.getElementById('lkpd-area');
+
+            // Hide buttons during PDF capture
+            const noPrintElements = document.querySelectorAll('.no-print');
+            noPrintElements.forEach(el => el.style.display = 'none');
+
+            const opt = {
+                margin:       [10, 10],
+                filename:     `LKPD_Digital_${name}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            try {
+                // Ensure all sections are briefly visible for capture or handle data collection
+                // This version captures the current visual state.
+                // For a more complete PDF, we'd create a hidden full-content clone.
+                
+                await html2pdf().set(opt).from(element).save();
+                showToast("PDF Berhasil diunduh! 🎓");
+            } catch (error) {
+                showToast("Gagal membuat PDF.");
+                console.error(error);
+            } finally {
+                noPrintElements.forEach(el => el.style.display = '');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
